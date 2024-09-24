@@ -47,7 +47,7 @@
     <h2>結果</h2>
     <p id="result"></p>
 
-    <h2>預測百分比</h2>
+    <h2>百分比(大約)</h2>
     <textarea id="percentages" readonly></textarea>
 
     <script>
@@ -57,18 +57,23 @@
                             0.4504, 0.5701, 0.7453, 0.8523, 0.9295, 0.9613];
 
         // 三次樣條插值的簡單近似
-        function interpolate(x, xArray, yArray) {
-            if (x <= xArray[0]) return yArray[0];
-            if (x >= xArray[xArray.length - 1]) return yArray[yArray.length - 1];
-            
-            let i = 1;
-            while (xArray[i] < x) i++;
-            
-            const x0 = xArray[i - 1], x1 = xArray[i];
-            const y0 = yArray[i - 1], y1 = yArray[i];
-            
-            return y0 + (y1 - y0) * (x - x0) / (x1 - x0);
-        }
+	function interpolate(x, xArray, yArray) {
+    	if (x <= xArray[0]) return yArray[0];
+    	if (x >= xArray[xArray.length - 1]) {
+        // 使用最後兩個已知點進行線性外推
+        	const x0 = xArray[xArray.length - 2], x1 = xArray[xArray.length - 1];
+        	const y0 = yArray[yArray.length - 2], y1 = yArray[yArray.length - 1];
+        	return y1 + (y1 - y0) * (x - x1) / (x1 - x0);
+    	}
+
+    	let i = 1;
+    	while (xArray[i] < x) i++;
+
+    	const x0 = xArray[i - 1], x1 = xArray[i];
+    	const y0 = yArray[i - 1], y1 = yArray[i];
+
+    	return y0 + (y1 - y0) * (x - x0) / (x1 - x0);
+	}
 
         function calculateTotal() {
             const magicPower = parseFloat(document.getElementById('magic').value);
@@ -102,7 +107,7 @@
             const physicalPercentage = interpolate(best_distribution.physical, levels, percentages);
 
             document.getElementById('result').innerHTML = `
-                最大總值為: ${max_value.toFixed(2)}<br>
+                最大總值為(大約): ${max_value.toFixed(2)}<br>
                 最佳點數分配:<br>
                 魔法攻擊力等級 ${best_distribution.magic} (使用百分比: ${(magicPercentage * 100).toFixed(2)}%)<br>
                 物理攻擊力等級 ${best_distribution.physical} (使用百分比: ${(physicalPercentage * 100).toFixed(2)}%)

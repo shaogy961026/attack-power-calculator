@@ -47,7 +47,7 @@
     <h2>結果</h2>
     <p id="result"></p>
 
-    <h2>百分比(大約)</h2>
+    <h2>等級與加乘百分比(估計值)</h2>
     <textarea id="percentages" readonly></textarea>
 
     <script>
@@ -107,7 +107,7 @@
             const physicalPercentage = interpolate(best_distribution.physical, levels, percentages);
 
             document.getElementById('result').innerHTML = `
-                最大總值為(大約): ${max_value.toFixed(2)}<br>
+                最大總值為(估計值): ${max_value.toFixed(2)}<br>
                 最佳點數分配:<br>
                 魔法攻擊力等級 ${best_distribution.magic} (使用百分比: ${(magicPercentage * 100).toFixed(2)}%)<br>
                 物理攻擊力等級 ${best_distribution.physical} (使用百分比: ${(physicalPercentage * 100).toFixed(2)}%)

@@ -1,50 +1,98 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Attack Power Calculator</title>
+    <title>攻擊力計算機</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+        h1 {
+            color: #2c3e50;
+            font-size: 2em;
+            margin-bottom: 10px;
+        }
+        h2 {
+            color: #2980b9;
+            font-size: 1.5em;
+            margin-top: 20px;
+            margin-bottom: 10px;
         }
         label {
             display: block;
             margin: 10px 0 5px;
+            font-weight: bold;
         }
         input {
-            padding: 5px;
+            padding: 10px;
             width: 100%;
             box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
         }
         button {
             margin: 10px 0;
             padding: 10px 15px;
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 10px;
-        }
-        th, td {
-            border: 1px solid #ccc;
-            padding: 5px;
-            text-align: center;
-        }
-        th {
-            background-color: #f2f2f2;
+        button:hover {
+            background-color: #2980b9;
         }
         .percentages {
             width: 100%;
             height: 300px;
             overflow-y: auto;
             margin-top: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .percentages-table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: white;
+        }
+        th, td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+            position: sticky;
+            top: 0;
+            z-index: 1;
         }
         .version {
             margin-top: 20px;
             font-size: 0.9em;
             color: #666;
+        }
+        #result {
+            margin-top: 15px;
+            font-weight: bold;
+            color: #333; /* 恢复默认颜色 */
+        }
+        #result-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        #result-text {
+            color: #333; /* 加深颜色 */
+        }
+        .highlight {
+            font-weight: bold;
+            color: #e74c3c; /* 高亮等级 */
         }
     </style>
 </head>
@@ -65,12 +113,22 @@
     <button onclick="clearInputs()">清除輸入</button>
 
     <h2>結果</h2>
-    <p id="result"></p>
+    <div id="result-container">
+        <div id="result-title">計算結果:</div>
+        <p id="result-text">請輸入數值並點擊計算。</p>
+    </div>
 
     <h2>等級與加乘百分比(估計值)</h2>
-    <div class="percentages" id="percentages"></div>
+    <div class="percentages">
+        <table class="percentages-table">
+            <thead>
+                <tr><th>等級</th><th>百分比</th></tr>
+            </thead>
+            <tbody id="percentages-body"></tbody>
+        </table>
+    </div>
 
-    <div class="version">版本號: 1.0.4</div>
+    <div class="version">版本號: 1.0.5</div>
 
     <script>
         // 等級與百分比的資料方便維護
@@ -145,11 +203,11 @@
             const magicPercentage = interpolate(best_distribution.magic, levels, percentages);
             const physicalPercentage = interpolate(best_distribution.physical, levels, percentages);
 
-            document.getElementById('result').innerHTML = `
+            document.getElementById('result-text').innerHTML = `
                 最大總值為 (估計值) : ${max_value.toFixed(2)}<br>
                 最佳點數分配:<br>
-                魔法攻擊力 LV: ${best_distribution.magic} (使用百分比: ${(magicPercentage * 100).toFixed(2)}%)<br>
-                物理攻擊力 LV: ${best_distribution.physical} (使用百分比: ${(physicalPercentage * 100).toFixed(2)}%)
+                <span class="highlight">魔法攻擊力 LV: ${best_distribution.magic} (使用百分比: ${(magicPercentage * 100).toFixed(2)}%)</span><br>
+                <span class="highlight">物理攻擊力 LV: ${best_distribution.physical} (使用百分比: ${(physicalPercentage * 100).toFixed(2)}%)</span>
             `;
         }
 
@@ -157,25 +215,22 @@
             document.getElementById('magic').value = '';
             document.getElementById('physical').value = '';
             document.getElementById('points').value = '';
-            document.getElementById('result').innerHTML = '';
+            document.getElementById('result-text').innerHTML = '請輸入數值並點擊計算。';
         }
 
         // 顯示預測百分比
         function showPercentages() {
-            const percentagesDiv = document.getElementById('percentages');
-            percentagesDiv.innerHTML = ''; // 清空現有內容
-            let table = '<table><tr><th>等級</th><th>百分比</th></tr>'; // 建立表格
+            const percentagesBody = document.getElementById('percentages-body');
+            percentagesBody.innerHTML = ''; // 清空現有內容
 
             for (let level = 1; level <= 1000; level++) {
                 const percentage = interpolate(level, levels, percentages);
-                table += `<tr><td>LV${level}</td><td>${(percentage * 100).toFixed(2)}%</td></tr>`;
+                percentagesBody.innerHTML += `<tr><td>LV${level}</td><td>${(percentage * 100).toFixed(2)}%</td></tr>`;
                 // 每10級增加一行
                 if (level % 10 === 0) {
-                    table += '<tr><td colspan="2"></td></tr>'; // 每10級加一行空行
+                    percentagesBody.innerHTML += '<tr><td colspan="2"></td></tr>'; // 每10級加一行空行
                 }
             }
-            table += '</table>';
-            percentagesDiv.innerHTML = table; // 顯示表格
         }
 
         // 初始化時顯示預測百分比

@@ -252,17 +252,22 @@
     const physicalValue = physicalPower + physicalPower * physicalPercentage;
     const magicValue = magicPower + magicPower * magicPercentage;
 
+    // 计算加成的值
+    const physicalBonus = physicalPower * physicalPercentage;
+    const magicBonus = magicPower * magicPercentage;
+
     document.getElementById('result-text').innerHTML = `
         <strong>最佳點數分配:</strong><br>
         物理攻擊力 LV: <span style="color: red;">${best_distribution.physical}</span> (使用百分比: ${(physicalPercentage * 100).toFixed(2)}%)<br>
         魔法攻擊力 LV: <span style="color: red;">${best_distribution.magic}</span> (使用百分比: ${(magicPercentage * 100).toFixed(2)}%)<br>
-	<br>
+        <br>
         <strong>計算方式:</strong><br>
-        物理攻擊力: ${physicalPower}(原始)+${physicalPower}*${(physicalPercentage * 100).toFixed(2)}%(加成)= ${physicalValue.toFixed(2)}<br>
-        魔法攻擊力: ${magicPower}(原始)+${magicPower}*${(magicPercentage * 100).toFixed(2)}%(加成)= ${magicValue.toFixed(2)}<br>
+        物理攻擊力: ${physicalPower}(原始)+${physicalBonus.toFixed(2)}(加成)= ${physicalValue.toFixed(2)}<br>
+        魔法攻擊力: ${magicPower}(原始)+${magicBonus.toFixed(2)}(加成)= ${magicValue.toFixed(2)}<br>
         加總: ${max_value.toFixed(2)}
     `;
 }
+
 
 
         function clearInputs() {

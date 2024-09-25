@@ -71,6 +71,23 @@
             top: 0;
             z-index: 1;
         }
+        .interpolated {
+            background-color: #fff8b3; /* 黃色背景 */
+            position: relative;
+        }
+        .interpolated:hover::after {
+            content: '此值為插值法估算';
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #333;
+            color: white;
+            padding: 5px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            white-space: nowrap;
+        }
         .version {
             margin-top: 20px;
             font-size: 0.9em;
@@ -100,11 +117,11 @@
 
     <h1>攻擊力計算機</h1>
 
-    <label for="magic">魔法攻擊力:</label>
-    <input type="number" id="magic" placeholder="輸入魔法攻擊力">
-
     <label for="physical">物理攻擊力:</label>
     <input type="number" id="physical" placeholder="輸入物理攻擊力">
+
+    <label for="magic">魔法攻擊力:</label>
+    <input type="number" id="magic" placeholder="輸入魔法攻擊力">
 
     <label for="points">總點數:</label>
     <input type="number" id="points" placeholder="輸入總點數">
@@ -128,7 +145,7 @@
         </table>
     </div>
 
-    <div class="version">版本號: 1.0.5</div>
+    <div class="version">版本號: 1.1.0</div>
 
     <script>
         // 等級與百分比的資料方便維護
@@ -157,7 +174,7 @@
 
         // 三次樣條插值的簡單近似
         function interpolate(x, xArray, yArray) {
-	    if (x === 0) return 0; // 当等级为0时返回0%
+	    if (x === 0) return 0; // 當等級為0時返回0%
             if (x <= xArray[0]) return yArray[0];
             if (x >= xArray[xArray.length - 1]) {
                 const x0 = xArray[xArray.length - 2], x1 = xArray[xArray.length - 1];
@@ -219,22 +236,34 @@
             document.getElementById('result-text').innerHTML = '請輸入數值並點擊計算。';
         }
 
-        // 顯示預測百分比
         function showPercentages() {
-            const percentagesBody = document.getElementById('percentages-body');
-            percentagesBody.innerHTML = ''; // 清空現有內容
+            const tbody = document.getElementById('percentages-body');
+            tbody.innerHTML = ''; // 清空表格
 
-            for (let level = 1; level <= 1000; level++) {
-                const percentage = interpolate(level, levels, percentages);
-                percentagesBody.innerHTML += `<tr><td>LV${level}</td><td>${(percentage * 100).toFixed(2)}%</td></tr>`;
-                // 每10級增加一行
-                if (level % 10 === 0) {
-                    percentagesBody.innerHTML += '<tr><td colspan="2"></td></tr>'; // 每10級加一行空行
+            for (let lv = 1; lv <= 1000; lv++) {
+                const row = document.createElement('tr');
+                const levelCell = document.createElement('td');
+                const percentageCell = document.createElement('td');
+
+                levelCell.textContent = `LV${lv}`;
+
+                let percentage;
+                if (levelPercentageData[lv] !== undefined) {
+                    percentage = levelPercentageData[lv];
+                    percentageCell.textContent = `${(percentage * 100).toFixed(2)}%`;
+                } else {
+                    percentage = interpolate(lv, levels, percentages);
+                    percentageCell.textContent = `${(percentage * 100).toFixed(2)}%`;
+                    percentageCell.classList.add('interpolated'); // 標記為插值法計算
                 }
+
+                row.appendChild(levelCell);
+                row.appendChild(percentageCell);
+                tbody.appendChild(row);
             }
         }
 
-        // 初始化時顯示預測百分比
+        // 初始顯示等級百分比表格
         showPercentages();
     </script>
 

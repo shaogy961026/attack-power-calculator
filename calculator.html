@@ -157,6 +157,7 @@
 
         // 三次樣條插值的簡單近似
         function interpolate(x, xArray, yArray) {
+	    if (x === 0) return 0; // 当等级为0时返回0%
             if (x <= xArray[0]) return yArray[0];
             if (x >= xArray[xArray.length - 1]) {
                 const x0 = xArray[xArray.length - 2], x1 = xArray[xArray.length - 1];

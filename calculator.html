@@ -145,7 +145,7 @@
         </table>
     </div>
 
-    <div class="version">v1.1.3</div>
+    <div class="version">v1.1.4</div>
 
     <script>
         // 等級與百分比的資料方便維護
@@ -220,42 +220,50 @@
         }
 
         function calculateTotal() {
-            const magicPower = parseFloat(document.getElementById('magic').value);
-            const physicalPower = parseFloat(document.getElementById('physical').value);
-            const points = parseInt(document.getElementById('points').value);
+    const magicPower = parseFloat(document.getElementById('magic').value);
+    const physicalPower = parseFloat(document.getElementById('physical').value);
+    const points = parseInt(document.getElementById('points').value);
 
-            if (isNaN(magicPower) || isNaN(physicalPower) || isNaN(points)) {
-                alert('請確保所有輸入都是有效的數字');
-                return;
-            }
+    if (isNaN(magicPower) || isNaN(physicalPower) || isNaN(points)) {
+        alert('請確保所有輸入都是有效的數字');
+        return;
+    }
 
-            let max_value = 0;
-            let best_distribution = { magic: 0, physical: 0 };
+    let max_value = 0;
+    let best_distribution = { magic: 0, physical: 0 };
 
-            for (let magicLevel = 0; magicLevel <= points; magicLevel++) {
-                const physicalLevel = points - magicLevel;
+    for (let magicLevel = 0; magicLevel <= points; magicLevel++) {
+        const physicalLevel = points - magicLevel;
 
-                const magicIncrease = magicPower * (1 + interpolate(magicLevel, levels, percentages));
-                const physicalIncrease = physicalPower * (1 + interpolate(physicalLevel, levels, percentages));
+        const magicIncrease = magicPower * (1 + interpolate(magicLevel, levels, percentages));
+        const physicalIncrease = physicalPower * (1 + interpolate(physicalLevel, levels, percentages));
 
-                const totalValue = magicIncrease + physicalIncrease;
+        const totalValue = magicIncrease + physicalIncrease;
 
-                if (totalValue > max_value) {
-                    max_value = totalValue;
-                    best_distribution = { magic: magicLevel, physical: physicalLevel };
-                }
-            }
-
-            const magicPercentage = interpolate(best_distribution.magic, levels, percentages);
-            const physicalPercentage = interpolate(best_distribution.physical, levels, percentages);
-
-            document.getElementById('result-text').innerHTML = `
-                最大總值為 (估計值) : ${max_value.toFixed(2)}<br>
-                最佳點數分配:<br>
-		<span class="highlight">物理攻擊力 LV: ${best_distribution.physical} (使用百分比: ${(physicalPercentage * 100).toFixed(2)}%)</span><br>
-                <span class="highlight">魔法攻擊力 LV: ${best_distribution.magic} (使用百分比: ${(magicPercentage * 100).toFixed(2)}%)</span>
-            `;
+        if (totalValue > max_value) {
+            max_value = totalValue;
+            best_distribution = { magic: magicLevel, physical: physicalLevel };
         }
+    }
+
+    const magicPercentage = interpolate(best_distribution.magic, levels, percentages);
+    const physicalPercentage = interpolate(best_distribution.physical, levels, percentages);
+
+    const physicalValue = physicalPower + physicalPower * physicalPercentage;
+    const magicValue = magicPower + magicPower * magicPercentage;
+
+    document.getElementById('result-text').innerHTML = `
+        <strong>最佳點數分配:</strong><br>
+        物理攻擊力 LV: <span style="color: red;">${best_distribution.physical}</span> (使用百分比: ${(physicalPercentage * 100).toFixed(2)}%)<br>
+        魔法攻擊力 LV: <span style="color: red;">${best_distribution.magic}</span> (使用百分比: ${(magicPercentage * 100).toFixed(2)}%)<br>
+	<br>
+        <strong>計算方式:</strong><br>
+        物理攻擊力: ${physicalPower}(原始)+${physicalPower}*${(physicalPercentage * 100).toFixed(2)}%(加成)= ${physicalValue.toFixed(2)}<br>
+        魔法攻擊力: ${magicPower}(原始)+${magicPower}*${(magicPercentage * 100).toFixed(2)}%(加成)= ${magicValue.toFixed(2)}<br>
+        加總: ${max_value.toFixed(2)}
+    `;
+}
+
 
         function clearInputs() {
             document.getElementById('magic').value = '';

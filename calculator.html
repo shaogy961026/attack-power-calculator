@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>攻擊力計算機</title>
+    <title id="page-title">攻擊力計算機</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -115,27 +115,37 @@
 </head>
 <body>
 
-    <h1>攻擊力計算機</h1>
+    <div style="display: flex; align-items: center; justify-content: space-between;">
+        <h1 id="main-title">攻擊力計算機</h1>
+        <div style="text-align: right;">
+            <label for="language-select" style="margin-right: 5px;">選擇語言:</label>
+            <select id="language-select" onchange="changeLanguage()">
+                <option value="zh-Hant">繁體中文</option>
+                <option value="en">English</option>
+                <option value="ko">한국어</option>
+            </select>
+        </div>
+    </div>
 
-    <label for="physical">物理攻擊力:</label>
+    <label for="physical" id="label-physical">物理攻擊力:</label>
     <input type="number" id="physical" placeholder="輸入物理攻擊力">
 
-    <label for="magic">魔法攻擊力:</label>
+    <label for="magic" id="label-magic">魔法攻擊力:</label>
     <input type="number" id="magic" placeholder="輸入魔法攻擊力">
 
-    <label for="points">總點數:</label>
+    <label for="points" id="label-points">總點數:</label>
     <input type="number" id="points" placeholder="輸入總點數">
 
-    <button onclick="calculateTotal()">計算</button>
-    <button onclick="clearInputs()">清除輸入</button>
+    <button onclick="calculateTotal()" id="button-calculate">計算</button>
+    <button onclick="clearInputs()" id="button-clear">清除輸入</button>
 
-    <h2>結果</h2>
+    <h2 id="result-heading">結果</h2>
     <div id="result-container">
         <div id="result-title">計算結果:</div>
         <p id="result-text">請輸入數值並點擊計算。</p>
     </div>
 
-    <h2>等級與加乘百分比(估計值)</h2>
+    <h2>計算所使用等級與加乘百分比(估計值)</h2>
     <div class="percentages">
         <table class="percentages-table">
             <thead>
@@ -144,58 +154,164 @@
             <tbody id="percentages-body"></tbody>
         </table>
     </div>
-
-    <div class="version">v1.1.5</div>
+    <div class="version">v1.2.0</div>
 
     <script>
+        const translations = {
+            "zh-Hant": {
+                title: "攻擊力計算機",
+                labelPhysical: "物理攻擊力:",
+                labelMagic: "魔法攻擊力:",
+                labelPoints: "總點數:",
+                placeholderPhysical: "輸入物理攻擊力",
+                placeholderMagic: "輸入魔法攻擊力",
+                placeholderPoints: "輸入總點數",
+                buttonCalculate: "計算",
+                buttonClear: "清除輸入",
+                resultHeading: "結果",
+                resultTitle: "計算結果:",
+                resultText: "請輸入數值並點擊計算。"
+            },
+            "en": {
+                title: "Attack Power Calculator",
+                labelPhysical: "Physical Attack Power:",
+                labelMagic: "Magical Attack Power:",
+                labelPoints: "Total Points:",
+                placeholderPhysical: "Enter Physical Attack Power",
+                placeholderMagic: "Enter Magical Attack Power",
+                placeholderPoints: "Enter Total Points",
+                buttonCalculate: "Calculate",
+                buttonClear: "Clear Inputs",
+                resultHeading: "Results",
+                resultTitle: "Calculation Result:",
+                resultText: "Please enter values and click calculate."
+            },
+            "ko": {
+                title: "공격력 계산기",
+                labelPhysical: "물리 공격력:",
+                labelMagic: "마법 공격력:",
+                labelPoints: "총 포인트:",
+                placeholderPhysical: "물리 공격력 입력",
+                placeholderMagic: "마법 공격력 입력",
+                placeholderPoints: "총 포인트 입력",
+                buttonCalculate: "계산",
+                buttonClear: "입력 지우기",
+                resultHeading: "결과",
+                resultTitle: "계산 결과:",
+                resultText: "값을 입력하고 계산을 클릭하세요."
+            }
+        };
+
+        function changeLanguage() {
+            const selectedLanguage = document.getElementById('language-select').value;
+            document.getElementById('page-title').innerText = translations[selectedLanguage].title;
+            document.getElementById('main-title').innerText = translations[selectedLanguage].title;
+            document.getElementById('label-physical').innerText = translations[selectedLanguage].labelPhysical;
+            document.getElementById('label-magic').innerText = translations[selectedLanguage].labelMagic;
+            document.getElementById('label-points').innerText = translations[selectedLanguage].labelPoints;
+            document.getElementById('physical').placeholder = translations[selectedLanguage].placeholderPhysical;
+            document.getElementById('magic').placeholder = translations[selectedLanguage].placeholderMagic;
+            document.getElementById('points').placeholder = translations[selectedLanguage].placeholderPoints;
+            document.getElementById('button-calculate').innerText = translations[selectedLanguage].buttonCalculate;
+            document.getElementById('button-clear').innerText = translations[selectedLanguage].buttonClear;
+            document.getElementById('result-heading').innerText = translations[selectedLanguage].resultHeading;
+            document.getElementById('result-title').innerText = translations[selectedLanguage].resultTitle;
+            document.getElementById('result-text').innerText = translations[selectedLanguage].resultText;
+        }
+
         // 等級與百分比的資料方便維護
-	const levelPercentageData = {
-    	    1: 0.035,
-	    2: 0.0661,
-	    3: 0.0941,
-	    4: 0.1196,
-	    5: 0.1429,
-	    6: 0.1644,
-	    10: 0.2371,
-	    20: 0.3636,
-	    30: 0.4504,
-	    40: 0.5166,
-	    50: 0.5701,
-	    52: 0.5797,
-	    55: 0.5935,
-	    59: 0.6108,
-	    60: 0.6150,
-	    70: 0.6537,
-	    80: 0.6877,
-	    86: 0.7063,
-	    87: 0.7092,
-	    90: 0.7180,
-	    100: 0.7453,
-	    110: 0.7702,
-	    120: 0.7931,
-	    130: 0.8142,
-	    140: 0.8339,
-	    150: 0.8523,
-	    160: 0.8695,
-	    170: 0.8857,
-	    180: 0.9011,
-	    190: 0.9156,
-	    200: 0.9295,
-	    210: 0.9426,
-	    220: 0.9552,
- 	    230: 0.9673,
- 	    240: 0.9788,
- 	    245: 0.9844,
-	    250: 0.9899,
-	    255: 0.9953,
-	    260: 1.0006,
-	    261: 1.0016,
-	    262: 1.0027,
-	    263: 1.0037,
-	    264: 1.0047,
-	    265: 1.0058,
-	    266: 1.0068
-	};
+        const levelPercentageData = {
+            1: 0.035,
+            2: 0.0661,
+            3: 0.0941,
+            4: 0.1196,
+            5: 0.1429,
+            6: 0.1644,
+            10: 0.2371,
+            20: 0.3636,
+            30: 0.4504,
+            40: 0.5166,
+            50: 0.5701,
+            52: 0.5797,
+            55: 0.5935,
+            59: 0.6108,
+            60: 0.6150,
+            70: 0.6537,
+            80: 0.6877,
+            86: 0.7063,
+            87: 0.7092,
+            90: 0.7180,
+            100: 0.7453,
+            110: 0.7702,
+            120: 0.7931,
+            130: 0.8142,
+            140: 0.8339,
+            150: 0.8523,
+            160: 0.8695,
+            170: 0.8857,
+            180: 0.9011,
+            190: 0.9156,
+            200: 0.9295,
+            210: 0.9426,
+            220: 0.9552,
+            230: 0.9673,
+            240: 0.9788,
+            245: 0.9844,
+            250: 0.9899,
+            255: 0.9953,
+            260: 1.0006,
+            261: 1.0016,
+            262: 1.0027,
+            263: 1.0037,
+            264: 1.0047,
+            265: 1.0058,
+            266: 1.0068,
+            270: 1.0119,
+            280: 1.0208,
+            290: 1.0303,
+            300: 1.0396,
+            310: 1.0486,
+            320: 1.0572,
+            330: 1.0657,
+            340: 1.0738,
+            350: 1.0818,
+            360: 1.0895,
+            370: 1.0978,
+            380: 1.1043,
+            390: 1.1115,
+            400: 1.1184,
+            410: 1.1252,
+            420: 1.1318,
+            430: 1.1383,
+            440: 1.1446,
+            450: 1.1508,
+            460: 1.1569,
+            470: 1.1628,
+            480: 1.1686,
+            490: 1.1743,
+            500: 1.1799,
+            510: 1.1853,
+            520: 1.1907,
+            530: 1.1960,
+            540: 1.2011,
+            550: 1.2062,
+            560: 1.2112,
+            570: 1.2161,
+            580: 1.2209,
+            590: 1.2256,
+            600: 1.2302,
+            610: 1.2348,
+            620: 1.2393,
+            630: 1.2437,
+            640: 1.2481,
+            650: 1.2524,
+            660: 1.2566,
+            670: 1.2608,
+            680: 1.2649,
+            690: 1.2689,
+            700: 1.2729,
+            710: 1.2768
+        };
 
         const levels = Object.keys(levelPercentageData).map(Number);
         const percentages = Object.values(levelPercentageData);
@@ -259,12 +375,12 @@
     document.getElementById('result-text').innerHTML = `
         <strong>最佳點數分配:</strong><br>
         物理攻擊力 LV: <span style="color: red;">${best_distribution.physical}</span> (使用百分比: ${(physicalPercentage * 100).toFixed(2)}%)<br>
-        魔法攻擊力 LV: <span style="color: red;">${best_distribution.magic}</span> (使用百分比: ${(magicPercentage * 100).toFixed(2)}%)<br>
+        魔法攻擊力 LV: <span style="color: blue;">${best_distribution.magic}</span> (使用百分比: ${(magicPercentage * 100).toFixed(2)}%)<br>
         <br>
         <strong>計算方式:</strong><br>
-        物理攻擊力: ${physicalPower}(原始)+${physicalBonus.toFixed(2)}(加成)= ${physicalValue.toFixed(2)}<br>
-        魔法攻擊力: ${magicPower}(原始)+${magicBonus.toFixed(2)}(加成)= ${magicValue.toFixed(2)}<br>
-        加總: ${max_value.toFixed(2)}
+        物理攻擊力: ${physicalPower}(原始)+${physicalBonus.toFixed()}(加成) ≈ ${physicalValue.toFixed()}<br>
+        魔法攻擊力: ${magicPower}(原始)+${magicBonus.toFixed()}(加成) ≈ ${magicValue.toFixed()}<br>
+        加總: ${max_value.toFixed()}
     `;
 }
 
@@ -281,7 +397,7 @@
             const tbody = document.getElementById('percentages-body');
             tbody.innerHTML = ''; // 清空表格
 
-            for (let lv = 1; lv <= 1000; lv++) {
+            for (let lv = 1; lv <= 720; lv++) {
                 const row = document.createElement('tr');
                 const levelCell = document.createElement('td');
                 const percentageCell = document.createElement('td');

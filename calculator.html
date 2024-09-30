@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="zh-Hant">
 <head>
     <meta charset="UTF-8">
@@ -174,18 +174,17 @@
         <p id="result-text">請輸入數值並點擊計算。</p>
     </div>
 
-    <h2>計算所使用等級與加乘百分比 (估計值) 
+    <h2 id="level-percentage-title">計算所使用等級與加乘百分比 (估計值) 
         <span class="tooltip">
             <span style="font-size: 20px; color: red;">⚠️</span>
-            <span class="tooltip-text" style="font-weight: bold; color: red;">等級高於 710 後誤差較大</span>
+            <span class="tooltip-text" id="tooltip-text" style="font-weight: bold; color: red;">等級高於 710 後誤差較大</span>
         </span>
     </h2>
-    
 
     <div class="percentages">
         <table class="percentages-table">
             <thead>
-                <tr><th>等級</th><th>百分比</th></tr>
+                <tr><th id="level-header">等級</th><th id="percentage-header">百分比</th></tr>
             </thead>
             <tbody id="percentages-body"></tbody>
         </table>
@@ -202,11 +201,13 @@
                 placeholderPhysical: "輸入物理攻擊力",
                 placeholderMagic: "輸入魔法攻擊力",
                 placeholderPoints: "輸入總點數",
-                buttonCalculate: "計算",
-                buttonClear: "清除輸入",
                 resultHeading: "結果",
                 resultTitle: "計算結果:",
-                resultText: "請輸入數值並點擊計算。"
+                resultText: "請輸入數值並點擊計算。",
+                levelPercentageTitle: "計算所使用等級與加乘百分比 (估計值)",
+                tooltipText: "等級高於 710 後誤差較大",
+                levelHeader: "等級",
+                percentageHeader: "百分比"
             },
             "en": {
                 title: "Attack Power Calculator",
@@ -216,11 +217,13 @@
                 placeholderPhysical: "Enter Physical Attack Power",
                 placeholderMagic: "Enter Magical Attack Power",
                 placeholderPoints: "Enter Total Points",
-                buttonCalculate: "Calculate",
-                buttonClear: "Clear Inputs",
                 resultHeading: "Results",
                 resultTitle: "Calculation Result:",
-                resultText: "Please enter values and click calculate."
+                resultText: "Please enter values and click calculate.",
+                levelPercentageTitle: "Levels and Percentage Used in Calculation (Estimated)",
+                tooltipText: "Estimation error increases above level 710",
+                levelHeader: "Level",
+                percentageHeader: "Percentage"
             },
             "ko": {
                 title: "공격력 계산기",
@@ -230,29 +233,40 @@
                 placeholderPhysical: "물리 공격력 입력",
                 placeholderMagic: "마법 공격력 입력",
                 placeholderPoints: "총 포인트 입력",
-                buttonCalculate: "계산",
-                buttonClear: "입력 지우기",
                 resultHeading: "결과",
                 resultTitle: "계산 결과:",
-                resultText: "값을 입력하고 계산을 클릭하세요."
+                resultText: "값을 입력하고 계산을 클릭하십시오.",
+                levelPercentageTitle: "계산에 사용된 레벨 및 비율 (추정치)",
+                tooltipText: "710 레벨 이상에서 오차가 증가합니다.",
+                levelHeader: "레벨",
+                percentageHeader: "비율"
             }
         };
 
         function changeLanguage() {
-            const selectedLanguage = document.getElementById('language-select').value;
-            document.getElementById('page-title').innerText = translations[selectedLanguage].title;
-            document.getElementById('main-title').innerText = translations[selectedLanguage].title;
-            document.getElementById('label-physical').innerText = translations[selectedLanguage].labelPhysical;
-            document.getElementById('label-magic').innerText = translations[selectedLanguage].labelMagic;
-            document.getElementById('label-points').innerText = translations[selectedLanguage].labelPoints;
-            document.getElementById('physical').placeholder = translations[selectedLanguage].placeholderPhysical;
-            document.getElementById('magic').placeholder = translations[selectedLanguage].placeholderMagic;
-            document.getElementById('points').placeholder = translations[selectedLanguage].placeholderPoints;
-            document.getElementById('button-calculate').innerText = translations[selectedLanguage].buttonCalculate;
-            document.getElementById('button-clear').innerText = translations[selectedLanguage].buttonClear;
-            document.getElementById('result-heading').innerText = translations[selectedLanguage].resultHeading;
-            document.getElementById('result-title').innerText = translations[selectedLanguage].resultTitle;
-            document.getElementById('result-text').innerText = translations[selectedLanguage].resultText;
+            const selectedLanguage = document.getElementById("language-select").value;
+            const translation = translations[selectedLanguage];
+
+            document.getElementById("page-title").innerText = translation.title;
+            document.getElementById("label-physical").innerText = translation.labelPhysical;
+            document.getElementById("label-magic").innerText = translation.labelMagic;
+            document.getElementById("label-points").innerText = translation.labelPoints;
+            document.getElementById("physical").placeholder = translation.placeholderPhysical;
+            document.getElementById("magic").placeholder = translation.placeholderMagic;
+            document.getElementById("points").placeholder = translation.placeholderPoints;
+            document.getElementById("result-heading").innerText = translation.resultHeading;
+            document.getElementById("result-title").innerText = translation.resultTitle;
+            document.getElementById("result-text").innerText = translation.resultText;
+            document.getElementById("level-percentage-title").innerHTML = translation.levelPercentageTitle + 
+                '<span class="tooltip">' +
+                '<span style="font-size: 20px; color: red;">⚠️</span>' +
+                '<span class="tooltip-text" id="tooltip-text" style="font-weight: bold; color: red;">' + 
+                translation.tooltipText + 
+                '</span></span>';
+
+            document.getElementById("tooltip-text").innerText = translation.tooltipText;
+            document.getElementById("level-header").innerText = translation.levelHeader;
+            document.getElementById("percentage-header").innerText = translation.percentageHeader;
         }
 
         // 等級與百分比的資料方便維護
@@ -427,10 +441,10 @@
 
 
         function clearInputs() {
-            document.getElementById('magic').value = '';
-            document.getElementById('physical').value = '';
-            document.getElementById('points').value = '';
-            document.getElementById('result-text').innerHTML = '請輸入數值並點擊計算。';
+            document.getElementById("physical").value = '';
+            document.getElementById("magic").value = '';
+            document.getElementById("points").value = '';
+            document.getElementById("result-text").innerText = '請輸入數值並點擊計算。';
         }
 
         function showPercentages() {

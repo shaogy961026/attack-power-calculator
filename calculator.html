@@ -111,6 +111,35 @@
             font-weight: bold;
             color: #e74c3c; /* 高亮等级 */
         }
+        .tooltip {
+            position: relative;
+            display: inline-block;
+            cursor: pointer;
+        }
+
+        .tooltip-text {
+            visibility: hidden;
+            background-color: rgba(0, 0, 0, 0.75); /* 提示窗口背景颜色 */
+            color: #fff; /* 提示窗口文字颜色 */
+            text-align: center;
+            border-radius: 5px;
+            padding: 8px; /* 增加内边距以改善外观 */
+            position: absolute;
+            z-index: 1;
+            bottom: 125%; /* 提示窗口位置 */
+            left: 50%;
+            transform: translateX(-50%); /* 使其水平居中 */
+            opacity: 0;
+            transition: opacity 0.3s;
+            white-space: nowrap; /* 防止换行 */
+            display: inline-block; /* 使tooltip宽度自适应内容 */
+        }
+
+        .tooltip:hover .tooltip-text {
+            visibility: visible;
+            opacity: 1;
+        }
+
     </style>
 </head>
 <body>
@@ -145,7 +174,14 @@
         <p id="result-text">請輸入數值並點擊計算。</p>
     </div>
 
-    <h2>計算所使用等級與加乘百分比(估計值)</h2>
+    <h2>計算所使用等級與加乘百分比 (估計值) 
+        <span class="tooltip">
+            <span style="font-size: 20px; color: red;">⚠️</span>
+            <span class="tooltip-text" style="font-weight: bold; color: red;">等級高於 710 後誤差較大</span>
+        </span>
+    </h2>
+    
+
     <div class="percentages">
         <table class="percentages-table">
             <thead>
@@ -154,7 +190,7 @@
             <tbody id="percentages-body"></tbody>
         </table>
     </div>
-    <div class="version">v1.2.0</div>
+    <div class="version">v1.2.1</div>
 
     <script>
         const translations = {
@@ -336,6 +372,7 @@
         }
 
         function calculateTotal() {
+    let level = parseInt(document.getElementById('points').value); // 確保您有對應的輸入框
     const magicPower = parseFloat(document.getElementById('magic').value);
     const physicalPower = parseFloat(document.getElementById('physical').value);
     const points = parseInt(document.getElementById('points').value);
@@ -380,10 +417,13 @@
         <strong>計算方式:</strong><br>
         物理攻擊力: ${physicalPower}(原始)+${physicalBonus.toFixed()}(加成) ≈ ${physicalValue.toFixed()}<br>
         魔法攻擊力: ${magicPower}(原始)+${magicBonus.toFixed()}(加成) ≈ ${magicValue.toFixed()}<br>
-        加總: ${max_value.toFixed()}
+        加總: ${max_value.toFixed()}<br>
     `;
+    if (level > 710) {
+    document.getElementById('result-text').innerHTML += 
+        "<br><span style='font-weight: bold; color: red;'>等級高於 710 後誤差較大</span>";
+    }
 }
-
 
 
         function clearInputs() {

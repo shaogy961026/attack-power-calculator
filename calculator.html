@@ -176,7 +176,7 @@
 
     <h2 id="level-percentage-title">計算所使用等級與加乘百分比 (估計值) 
         <span class="tooltip">
-            <span style="font-size: 20px; color: red;">⚠️</span>
+            <span style="font-size: 20px; color: red;"⚠️</span>
             <span class="tooltip-text" id="tooltip-text" style="font-weight: bold; color: red;">等級高於 710 後誤差較大</span>
         </span>
     </h2>
@@ -189,7 +189,7 @@
             <tbody id="percentages-body"></tbody>
         </table>
     </div>
-    <div class="version">v1.2.1</div>
+    <div class="version">v1.2.3</div>
 
     <script>
         const translations = {
@@ -204,6 +204,8 @@
                 resultHeading: "結果",
                 resultTitle: "計算結果:",
                 resultText: "請輸入數值並點擊計算。",
+                buttonCalculate: "計算",
+                buttonClear: "清除輸入",
                 levelPercentageTitle: "計算所使用等級與加乘百分比 (估計值)",
                 tooltipText: "等級高於 710 後誤差較大",
                 levelHeader: "等級",
@@ -220,6 +222,8 @@
                 resultHeading: "Results",
                 resultTitle: "Calculation Result:",
                 resultText: "Please enter values and click calculate.",
+                buttonCalculate: "Calculate",
+                buttonClear: "Clear Inputs",
                 levelPercentageTitle: "Levels and Percentage Used in Calculation (Estimated)",
                 tooltipText: "Estimation error increases above level 710",
                 levelHeader: "Level",
@@ -236,6 +240,8 @@
                 resultHeading: "결과",
                 resultTitle: "계산 결과:",
                 resultText: "값을 입력하고 계산을 클릭하십시오.",
+                buttonCalculate: "계산",
+                buttonClear: "입력 지우기",
                 levelPercentageTitle: "계산에 사용된 레벨 및 비율 (추정치)",
                 tooltipText: "710 레벨 이상에서 오차가 증가합니다.",
                 levelHeader: "레벨",
@@ -257,6 +263,9 @@
             document.getElementById("result-heading").innerText = translation.resultHeading;
             document.getElementById("result-title").innerText = translation.resultTitle;
             document.getElementById("result-text").innerText = translation.resultText;
+            document.getElementById("button-calculate").innerText = translation.buttonCalculate;
+            document.getElementById("button-clear").innerText = translation.buttonClear;
+            
             document.getElementById("level-percentage-title").innerHTML = translation.levelPercentageTitle + 
                 '<span class="tooltip">' +
                 '<span style="font-size: 20px; color: red;">⚠️</span>' +
